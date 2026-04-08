@@ -13,15 +13,13 @@ import {
   X,
   Mountain,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/api/utility/utils'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-
-const PRIMARY = '#19386C'
 
 type NavChild = {
   title: string
@@ -85,9 +83,7 @@ function NavTooltip({
   if (!collapsed) return <>{children}</>
   return (
     <Tooltip>
-      <TooltipTrigger
-        render={<div className="contents" />}
-      >
+      <TooltipTrigger render={<div className="contents" />}>
         {children}
       </TooltipTrigger>
       <TooltipContent side="right">{label}</TooltipContent>
@@ -132,9 +128,10 @@ export function Sidebar() {
   const navItemClass = (active: boolean) =>
     cn(
       'flex items-center h-10 rounded-lg mx-2 px-3 transition-all duration-150 select-none',
-      active ? 'text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+      active ? 'bg-brand text-brand-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
     )
 
+  // Animation-only style objects — no color values
   const labelStyle = {
     opacity: collapsed ? 0 : 1,
     maxWidth: collapsed ? 0 : 200,
@@ -146,50 +143,44 @@ export function Sidebar() {
   return (
     <TooltipProvider delay={400}>
       <aside
-        className="relative flex flex-col h-full bg-white border-r border-slate-100 flex-shrink-0 shadow-[1px_0_8px_0_rgba(0,0,0,0.04)]"
-        style={{
-          width: collapsed ? 72 : 256,
-          transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
+        className={cn(
+          'relative flex flex-col h-full bg-card border-r border-border flex-shrink-0 shadow-[1px_0_8px_0_rgba(0,0,0,0.04)] transition-[width] duration-[250ms]',
+          collapsed ? 'w-[72px]' : 'w-64'
+        )}
+        style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}
       >
         {/* Brand / Logo */}
-        <div className="flex items-center h-[60px] px-4 border-b border-slate-100 flex-shrink-0 overflow-hidden">
+        <div className="flex items-center h-[60px] px-4 border-b border-border flex-shrink-0 overflow-hidden">
           <button
             onClick={() => collapsed && setCollapsed(false)}
             className={cn(
-              'flex items-center justify-center rounded-xl flex-shrink-0 transition-transform duration-150',
+              'flex items-center justify-center rounded-xl flex-shrink-0 bg-brand w-9 h-9 min-w-9 transition-transform duration-150',
               collapsed ? 'cursor-pointer hover:scale-105 active:scale-95' : 'cursor-default'
             )}
-            style={{ width: 36, height: 36, minWidth: 36, background: PRIMARY }}
             title={collapsed ? 'Open sidebar' : undefined}
             aria-label={collapsed ? 'Open sidebar' : 'Logo'}
             tabIndex={collapsed ? 0 : -1}
           >
-            <Mountain className="text-white" size={18} strokeWidth={2.5} />
+            <Mountain className="text-brand-foreground" size={18} strokeWidth={2.5} />
           </button>
           <div className="ml-3 flex-1 overflow-hidden" style={labelStyle}>
-            <p className="text-[10.5px] font-extrabold tracking-wider leading-snug" style={{ color: PRIMARY }}>
+            <p className="text-[10.5px] font-extrabold tracking-wider leading-snug text-brand">
               HIMALAYAN EVEREST
             </p>
-            <p className="text-[10.5px] font-extrabold tracking-wider leading-snug" style={{ color: PRIMARY }}>
+            <p className="text-[10.5px] font-extrabold tracking-wider leading-snug text-brand">
               INSURANCE
             </p>
-            <p
-              className="text-[9px] font-semibold tracking-[0.2em] leading-snug mt-0.5"
-              style={{ color: `${PRIMARY}80` }}
-            >
+            <p className="text-[9px] font-semibold tracking-[0.2em] leading-snug mt-0.5 text-brand/50">
               HEI
             </p>
           </div>
           {/* Close button — only visible when expanded */}
           <button
             onClick={() => setCollapsed(true)}
-            className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-            style={{
-              opacity: collapsed ? 0 : 1,
-              pointerEvents: collapsed ? 'none' : 'auto',
-              transition: 'opacity 0.15s',
-            }}
+            className={cn(
+              'flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-[colors,opacity] duration-[150ms]',
+              collapsed ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
+            )}
             aria-label="Close sidebar"
             title="Close sidebar"
             tabIndex={collapsed ? -1 : 0}
@@ -209,11 +200,7 @@ export function Sidebar() {
             if (!item.children) {
               return (
                 <NavTooltip key={item.id} label={item.title} collapsed={collapsed}>
-                  <Link
-                    href={item.href!}
-                    className={navItemClass(isLeafActive)}
-                    style={isLeafActive ? { background: PRIMARY } : {}}
-                  >
+                  <Link href={item.href!} className={navItemClass(isLeafActive)}>
                     <Icon size={18} className="flex-shrink-0" />
                     <span className="ml-3 text-sm font-medium" style={labelStyle}>
                       {item.title}
@@ -230,32 +217,24 @@ export function Sidebar() {
                     onClick={() => toggleMenu(item.id)}
                     className={cn(
                       navItemClass(false),
-                      'w-full text-left',
-                      isParentActive && 'text-slate-800'
+                      'w-[calc(100%-16px)] text-left',
+                      isParentActive && 'text-foreground'
                     )}
-                    style={{ width: 'calc(100% - 16px)' }}
                   >
                     <Icon
                       size={18}
-                      className="flex-shrink-0"
-                      style={{ color: isParentActive ? PRIMARY : undefined }}
+                      className={cn('flex-shrink-0', isParentActive && 'text-brand')}
                     />
-                    <span
-                      className="ml-3 text-sm font-medium flex-1 truncate"
-                      style={labelStyle}
-                    >
+                    <span className="ml-3 text-sm font-medium flex-1 truncate" style={labelStyle}>
                       {item.title}
                     </span>
                     <ChevronRight
                       size={14}
                       className={cn(
-                        'flex-shrink-0 text-slate-400 transition-transform duration-200',
-                        isOpen ? 'rotate-90' : ''
+                        'flex-shrink-0 text-muted-foreground transition-[opacity,transform] duration-200',
+                        isOpen ? 'rotate-90' : '',
+                        collapsed ? 'opacity-0' : 'opacity-100'
                       )}
-                      style={{
-                        opacity: collapsed ? 0 : 1,
-                        transition: 'opacity 0.15s, transform 0.2s',
-                      }}
                     />
                   </button>
                 </NavTooltip>
@@ -277,21 +256,15 @@ export function Sidebar() {
                         className={cn(
                           'flex items-center h-9 mx-2 pl-11 pr-3 rounded-lg mb-0.5 text-sm transition-all duration-150',
                           isChildActive
-                            ? 'font-medium'
-                            : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                            ? 'text-brand bg-brand/[0.07] font-medium'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                         )}
-                        style={
-                          isChildActive
-                            ? { color: PRIMARY, background: `${PRIMARY}12` }
-                            : {}
-                        }
                       >
                         <span
-                          className="w-1.5 h-1.5 rounded-full mr-2.5 flex-shrink-0"
-                          style={{
-                            background: isChildActive ? PRIMARY : 'currentColor',
-                            opacity: isChildActive ? 1 : 0.35,
-                          }}
+                          className={cn(
+                            'w-1.5 h-1.5 rounded-full mr-2.5 flex-shrink-0',
+                            isChildActive ? 'bg-brand opacity-100' : 'bg-current opacity-35'
+                          )}
                         />
                         <span className="truncate">{child.title}</span>
                       </Link>
@@ -302,7 +275,6 @@ export function Sidebar() {
             )
           })}
         </nav>
-
       </aside>
     </TooltipProvider>
   )

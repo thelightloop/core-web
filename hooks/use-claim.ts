@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { claimIntimationApis } from '@/lib/api'
+import { claimIntimationApis } from '@/lib/api/claimintimation/api'
 
 export const claimKeys = {
   all: ['claim'] as const,

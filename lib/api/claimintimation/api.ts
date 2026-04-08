@@ -1,4 +1,4 @@
-import { http } from "./useAxios"
+import { http } from "../axious/useAxios"
 
 export const claimIntimationApis = {
   //for basic info for policy detail section before intimate
