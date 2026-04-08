@@ -10,7 +10,7 @@ import {
   Building2,
   BarChart2,
   ChevronRight,
-  ChevronLeft,
+  X,
   Mountain,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -154,13 +154,20 @@ export function Sidebar() {
       >
         {/* Brand / Logo */}
         <div className="flex items-center h-[60px] px-4 border-b border-slate-100 flex-shrink-0 overflow-hidden">
-          <div
-            className="flex items-center justify-center rounded-xl flex-shrink-0"
+          <button
+            onClick={() => collapsed && setCollapsed(false)}
+            className={cn(
+              'flex items-center justify-center rounded-xl flex-shrink-0 transition-transform duration-150',
+              collapsed ? 'cursor-pointer hover:scale-105 active:scale-95' : 'cursor-default'
+            )}
             style={{ width: 36, height: 36, minWidth: 36, background: PRIMARY }}
+            title={collapsed ? 'Open sidebar' : undefined}
+            aria-label={collapsed ? 'Open sidebar' : 'Logo'}
+            tabIndex={collapsed ? 0 : -1}
           >
             <Mountain className="text-white" size={18} strokeWidth={2.5} />
-          </div>
-          <div className="ml-3 overflow-hidden" style={labelStyle}>
+          </button>
+          <div className="ml-3 flex-1 overflow-hidden" style={labelStyle}>
             <p className="text-[10.5px] font-extrabold tracking-wider leading-snug" style={{ color: PRIMARY }}>
               HIMALAYAN EVEREST
             </p>
@@ -174,6 +181,21 @@ export function Sidebar() {
               HEI
             </p>
           </div>
+          {/* Close button — only visible when expanded */}
+          <button
+            onClick={() => setCollapsed(true)}
+            className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            style={{
+              opacity: collapsed ? 0 : 1,
+              pointerEvents: collapsed ? 'none' : 'auto',
+              transition: 'opacity 0.15s',
+            }}
+            aria-label="Close sidebar"
+            title="Close sidebar"
+            tabIndex={collapsed ? -1 : 0}
+          >
+            <X size={15} strokeWidth={2.5} />
+          </button>
         </div>
 
         {/* Navigation */}
@@ -281,25 +303,6 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Collapse toggle */}
-        <div className="flex-shrink-0 border-t border-slate-100 p-2">
-          <button
-            onClick={() => setCollapsed((v) => !v)}
-            className="flex items-center justify-center w-full h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
-            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            <ChevronLeft
-              size={16}
-              style={{
-                transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-              }}
-            />
-            <span className="ml-2 text-xs" style={labelStyle}>
-              Collapse
-            </span>
-          </button>
-        </div>
       </aside>
     </TooltipProvider>
   )

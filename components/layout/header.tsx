@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import { Bell, Settings, ChevronDown, Search, User, LogOut, UserCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@base-ui/react'
+import { Input } from '../ui/input'
 
 const PRIMARY = '#19386C'
 
-export function Header() {
+export default function Header() {
   const [notifOpen, setNotifOpen] = useState(false)
   const [userOpen, setUserOpen] = useState(false)
 
@@ -23,7 +25,7 @@ export function Header() {
             size={14}
             style={{ color: 'rgba(255,255,255,0.45)' }}
           />
-          <input
+          <Input
             type="text"
             placeholder="Search..."
             className="h-8 pl-9 pr-4 rounded-lg text-sm bg-white/10 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:bg-white/15 focus:border-white/25 transition-all"
@@ -36,13 +38,14 @@ export function Header() {
       <div className="flex items-center gap-1">
         {/* Notification Bell */}
         <div className="relative">
-          <button
+          <Button
+        
             onClick={() => { setNotifOpen(!notifOpen); setUserOpen(false) }}
             className="relative flex items-center justify-center w-9 h-9 rounded-lg transition-colors text-white/75 hover:text-white hover:bg-white/10"
           >
             <Bell size={18} />
             <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-400 ring-2 ring-[#19386C]" />
-          </button>
+          </Button>
 
           {notifOpen && (
             <>
@@ -91,9 +94,9 @@ export function Header() {
         </div>
 
         {/* Settings */}
-        <button className="flex items-center justify-center w-9 h-9 rounded-lg transition-colors text-white/75 hover:text-white hover:bg-white/10">
+        <Button className="flex items-center justify-center w-9 h-9 rounded-lg transition-colors text-white/75 hover:text-white hover:bg-white/10">
           <Settings size={18} />
-        </button>
+        </Button>
 
         {/* Divider */}
         <div className="w-px h-5 mx-1 bg-white/20" />
