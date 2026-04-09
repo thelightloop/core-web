@@ -6,7 +6,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { cn } from '@/lib/api/utility/utils'
+import { cn } from '@/lib/utils/utils'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

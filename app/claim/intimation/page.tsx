@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   Search,
   AlertCircle,
@@ -22,9 +23,8 @@ import {
   type SortingState,
 } from '@tanstack/react-table'
 import { useGetPolicyBasicInfoByDocumentNumber } from '@/hooks/use-claim'
-import { cn } from '@/lib/api/utility/utils'
+import { cn } from '@/lib/utils/utils'
 import { Button } from '@/components/ui/button'
-import { UIDialog } from '@/components/ui/ui-dialog'
 import {
   Table,
   TableBody,
@@ -34,7 +34,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { PolicyResult } from '@/lib/interface/claim/claimintimation'
-import { IntimationModal } from '../../../components/claimIntimation/intimationpage'
 
 // ─── Status Badge ─────────────────────────────────────────────────────────────
 
@@ -64,9 +63,6 @@ function SortIcon({ direction }: { direction: 'asc' | 'desc' | false }) {
   if (direction === 'desc') return <ChevronDown size={12} />
   return <ChevronsUpDown size={12} className="text-muted-foreground" />
 }
-
-// ─── Intimation Modal ─────────────────────────────────────────────────────────
-
 
 // ─── Policy Data Table ────────────────────────────────────────────────────────
 
@@ -281,9 +277,8 @@ function PolicyDataTable({
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function ClaimIntimationPage() {
+  const router = useRouter()
   const [query, setQuery] = useState('')
-  const [selectedPolicy, setSelectedPolicy] = useState<PolicyResult | null>(null)
-  const [dialogOpen, setDialogOpen] = useState(false)
 
   const { data, isFetching, isError, error, refetch } = useGetPolicyBasicInfoByDocumentNumber(query.trim())
 
@@ -291,6 +286,10 @@ export default function ClaimIntimationPage() {
 
   const handleSearch = () => {
     if (query.trim()) refetch()
+  }
+
+  const handleIntimate = (policy: PolicyResult) => {
+    router.push(`/claim/intimation/new?policy=${encodeURIComponent(JSON.stringify(policy))}`)
   }
 
   return (
@@ -365,21 +364,8 @@ export default function ClaimIntimationPage() {
 
       {/* Data table */}
       {results && results.length > 0 && (
-        <PolicyDataTable
-          data={results}
-          onIntimate={(policy) => {
-            setSelectedPolicy(policy)
-            setDialogOpen(true)
-          }}
-        />
+        <PolicyDataTable data={results} onIntimate={handleIntimate} />
       )}
-
-      {/* Intimation dialog */}
-      <UIDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        {selectedPolicy && (
-          <IntimationModal policy={selectedPolicy} onClose={() => setDialogOpen(false)} />
-        )}
-      </UIDialog>
     </div>
   )
 }

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Bell, Settings, ChevronDown, Search, User, LogOut, UserCircle } from 'lucide-react'
-import { cn } from '@/lib/api/utility/utils'
+import { cn } from '@/lib/utils/utils'
 import { Button } from '@base-ui/react'
 import { Input } from '../ui/input'
 

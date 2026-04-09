@@ -1,7 +1,7 @@
 'use client'
 
 import { Construction } from 'lucide-react'
-import { cn } from '@/lib/api/utility/utils'
+import { cn } from '@/lib/utils/utils'
 
 interface ComingSoonProps {
   featureName: string
